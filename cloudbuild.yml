@@ -1,3 +1,9 @@
+#The Options filed is neccessary when using a custom service account. It specifies the storage logging options for the build.
+
+options:
+  logging: GCS_ONLY
+  logsBucket: gs://caranthir-archive 
+
 steps:
 - name: 'gcr.io/cloud-builders/git'
   entrypoint: 'sh'
@@ -27,3 +33,5 @@ images:
 
 #Take notice how this file is ordered. first step to last step. The image is pulled, caontainerized, and pushed to GCR.
 #Then the login of kubernetes is automated, and then a deployment and service is applied.
+#Match you Service account with the right permissions for kubectl to make this work.
+#Note, When using a Custom Service account you need specify a bucket to store your generated build logs Or else the build will fail.
