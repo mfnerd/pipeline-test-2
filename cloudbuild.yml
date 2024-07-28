@@ -18,16 +18,26 @@ steps:
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA', '.'] #builds the image
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA'] #push the image to Google Container Registry
+  args: ['push', 'gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA'] # pushes the image to Google Container Registry
 
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['container', 'clusters', 'get-credentials', 'atreides-war-fleet', '--zone', 'europe-west10', '--project', 'pooper-scooper'] #Kubernetes log in information
+  args: ['container', 'clusters', 'get-credentials', 'atreides-war-fleet', '--zone', 'europe-west10', '--project', '$PROJECT_ID'] # Kubernetes login information
 
 - name: 'gcr.io/cloud-builders/kubectl'
-  args: ['apply', '-f', 'k8s/deployment.yaml'] #apply the deployment
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+    kubectl apply -f k8s/deployment.yaml -v=8 && \
+    kubectl apply -f k8s/service.yaml -v=8 && \
+    kubectl get pods -v=8 && \
+    kubectl get services -v=8
 
-- name: 'gcr.io/cloud-builders/kubectl'
-  args: ['apply', '-f', 'k8s/service.yaml'] #apply the service
+#- name: 'gcr.io/cloud-builders/kubectl'
+#  args: ['apply', '-f', 'k8s/deployment.yaml'] #apply the deployment
+
+#- name: 'gcr.io/cloud-builders/kubectl'
+#  args: ['apply', '-f', 'k8s/service.yaml'] #apply the service
 
 images:
 - 'gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA'
