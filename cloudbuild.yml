@@ -30,6 +30,7 @@ steps:
   - |
     kubectl apply -f k8s/deployment.yaml -v=8 && \
     kubectl apply -f k8s/service.yaml -v=8 && \
+    kubectl rollout restart deployment/type-a && \ 
     kubectl get pods -v=8 && \
     kubectl get services -v=8
 
