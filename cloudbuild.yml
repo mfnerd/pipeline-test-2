@@ -29,7 +29,7 @@ steps:
   - '-c'
   - |
     sed -i "s|\$PROJECT_ID|${_PROJECT_ID}|g" k8s/deployment.yaml
-    sed -i "s|\$COMMIT_SHA|${_COMMIT_SHA}|g" k8s/deployment.yaml 
+    sed -i "s|\$COMMIT_SHA|latest|g" k8s/deployment.yaml 
     kubectl apply -f k8s/deployment.yaml -v=8 && \
     kubectl apply -f k8s/service.yaml -v=8 && \
     kubectl get pods -v=8 && \
@@ -46,7 +46,7 @@ images:
 
 substitutions:
   _PROJECT_ID: 'pooper-scooper'
-  _COMMIT_SHA: 'latest'
+#  _COMMIT_SHA: 'latest'
 #Take notice how this file is ordered. first step to last step. The image is pulled, caontainerized, and pushed to GCR.
 #Then the login of kubernetes is automated, and then a deployment and service is applied.
 #Match you Service account with the right permissions for kubectl to make this work.
