@@ -4,8 +4,8 @@ steps:
   args:
   - '-c'
   - |
-    git clone https://github.com/your-repo.git 
-    cd your-repo
+    git clone https://github.com/Gwenbleidd32/pipeline-test-2
+    cd pipeline-test-2
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA', '.'] #builds the image
