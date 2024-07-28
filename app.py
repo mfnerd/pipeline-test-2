@@ -77,7 +77,7 @@ def index():
           <div class="w3-display-middle">
             <h1>Counter Value: <span id="counter">{{ counter }}</span></h1>
             <div class="counter-container">
-              <button onclick="incrementCounter()">Increment</button>
+              <button onclick="incrementCounter()">Push-it</button>
             </div>
           </div>
         </div>
