@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: a-giftwrapped-container
-        image: gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA
+        image: gcr.io/$PROJECT_ID/regis:$COMMIT_SHA
         ports:
         - containerPort: 80
