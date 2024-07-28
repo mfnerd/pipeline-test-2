@@ -16,5 +16,6 @@ spec:
       containers:
       - name: a-giftwrapped-container
         image: gcr.io/pooper-scooper/regis:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
