@@ -12,21 +12,21 @@ def index():
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>Namespace2</title>
+            <title>Namespace1</title>
             <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
             <style>
                 body,h1 {font-family: "Raleway", sans-serif}
                 body, html {height: 100%}
                 .bgimg {
-                  background-image: url('https://storage.googleapis.com/a-dream/varshava-polsha-dvorec.jpg');
+                  background-image: url('https://storage.googleapis.com/a-dream/br2.jpg');
                   min-height: 100%;
                   background-position: center;
                   background-size: cover;
                 }
 
                 .w3-display-middle {
-                  background-image: url('https://storage.googleapis.com/a-dream/3hot.png');
+                  background-image: url('https://storage.googleapis.com/a-dream/2hot.png');
                   background-size: cover;
                   padding: 200px; /* Add padding to make it look better */
                   border-radius: 25px; /* Optional: adds rounded corners */
@@ -72,12 +72,12 @@ def index():
 
         <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
           <div class="w3-display-topleft w3-padding-large w3-xlarge">
-            <h1 class="w3-jumbo w3-animate-top">NAMESPACE-B</h1>
+            <h1 class="w3-jumbo w3-animate-top">NAMESPACE-A</h1>
           </div>
           <div class="w3-display-middle">
             <h1>Counter Value: <span id="counter">{{ counter }}</span></h1>
             <div class="counter-container">
-              <button onclick="incrementCounter()">Push-it</button>
+              <button onclick="incrementCounter()">Increment</button>
             </div>
           </div>
         </div>
