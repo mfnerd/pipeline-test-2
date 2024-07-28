@@ -13,11 +13,17 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA'] #push the image to Google Container Registry
 
-# This step is commented out because we don't have an active Kubernetes cluster- 
-# - name: 'gcr.io/cloud-builders/kubectl'
-#   args: ['set', 'image', 'deployment/my-deployment', 'my-container=gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA']
-#   env:
-#   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-#   - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['container', 'clusters', 'get-credentials', 'atreides-war-fleet', '--zone', 'europe-west10', '--project', 'pooper-scooper'] #Kubernetes log in information
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'k8s/deployment.yaml'] #apply the deployment
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'k8s/service.yaml'] #apply the service
+
 images:
 - 'gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA'
+
+#Take notice how this file is ordered. first step to last step. The image is pulled, caontainerized, and pushed to GCR.
+#Then the login of kubernetes is automated, and then a deployment and service is applied.
