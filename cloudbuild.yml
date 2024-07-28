@@ -2,7 +2,8 @@
 
 options:
   logging: GCS_ONLY
-  logsBucket: gs://caranthir-archive 
+   
+logsBucket: gs://caranthir-archive
 
 steps:
 - name: 'gcr.io/cloud-builders/git'
