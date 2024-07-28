@@ -1,0 +1,44 @@
+#Instructions 
+# docker --help 
+# docker image -help 
+# docker image build -t web1 . 
+
+#Now let's actually make this thing work.
+#1 Open your docker app on your computer.
+#2 docker image build -t web1 . 
+#3 if you have an error, it means you didn't do #1
+#4 docker image inspect web1 
+#5 docker image ls
+#6 docker run --name container_keisha1 -d yomommablackweb1
+#7 docker image rm web1 
+
+
+
+
+
+# Use Chain Guard's Python base image
+FROM cgr.dev/chainguard/python:3.7
+
+# Set environment variables to prevent Python from buffering stdout/stderr and creating .pyc files
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Create and set the working directory
+WORKDIR /dockerapp1
+
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code to the container
+COPY . .
+
+# Set the maintainer label
+LABEL maintainer="Dhubleidd <premiumforges32@gmail.com>" \
+      version="1.0"
+
+# Expose port 5000 for the Flask app
+EXPOSE 5000
+
+# Define the default command to run the app
+CMD ["python", "app.py"]
