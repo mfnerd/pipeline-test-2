@@ -45,8 +45,8 @@ images:
 - 'gcr.io/$PROJECT_ID/my-app:$COMMIT_SHA'
 
 substitutions:
-  _PROJECT_ID: '$PROJECT_ID'
-  _COMMIT_SHA: '$COMMIT_SHA'
+  _PROJECT_ID: 'your-project-id'
+  _COMMIT_SHA: 'your-commit-sha'
 #Take notice how this file is ordered. first step to last step. The image is pulled, caontainerized, and pushed to GCR.
 #Then the login of kubernetes is automated, and then a deployment and service is applied.
 #Match you Service account with the right permissions for kubectl to make this work.
