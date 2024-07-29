@@ -27,7 +27,7 @@ steps:
   - |
     sonar-scanner -X \
       -Dsonar.projectKey=${_SONAR_PROJECT_KEY} \
-      -Dsonar.organization=${_SONAR_ORGANIZATION// /%20} \
+      -Dsonar.organization=$(echo ${_SONAR_ORGANIZATION} | sed 's/ /%20/g') \
       -Dsonar.sources=. \
       -Dsonar.host.url=https://sonarcloud.io \
       -Dsonar.login=${_SONAR_TOKEN} \
