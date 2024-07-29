@@ -14,8 +14,8 @@ spec:
         app: type-a
     spec:
       containers:
-      - name: a-giftwrapped-container
-        image: gcr.io/pooper-scooper/regis:latest
+      - name: giftwrapped-container
+        image: gcr.io/pooper-scooper/cahir:v1.0.0
         imagePullPolicy: Always
         ports:
         - containerPort: 80
