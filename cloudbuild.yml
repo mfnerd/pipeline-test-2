@@ -25,7 +25,7 @@ steps:
   args:
   - '-c'
   - |
-    sonar-scanner \
+    sonar-scanner -X \
       -Dsonar.projectKey=${_SONAR_PROJECT_KEY} \
       -Dsonar.organization=${_SONAR_ORGANIZATION} \
       -Dsonar.sources=. \
