@@ -7,7 +7,7 @@ logsBucket: gs://caranthir-archive
 
 substitutions:
   _SONAR_PROJECT_KEY: "pipeline-test-2"
-  _SONAR_ORGANIZATION: "Beron Banton II"
+  _SONAR_ORGANIZATION: "gwenbleidd32"
   _SONAR_TOKEN: "3dae5149a6873b018629cfbfd8cfcda90ea3b6f1"
 
 steps:
@@ -22,14 +22,12 @@ steps:
 #SonarCloud analysis step
 - name: 'sonarsource/sonar-scanner-cli'
   entrypoint: 'sh'
-  env:
-  - 'SONAR_ORGANIZATION=${_SONAR_ORGANIZATION}'
   args:
   - '-c'
   - |
     sonar-scanner -X \
       -Dsonar.projectKey=${_SONAR_PROJECT_KEY} \
-      -Dsonar.organization="${SONAR_ORGANIZATION}" \
+      -Dsonar.organization=${_SONAR_ORGANIZATION} \
       -Dsonar.sources=. \
       -Dsonar.host.url=https://sonarcloud.io \
       -Dsonar.login=${_SONAR_TOKEN} \
