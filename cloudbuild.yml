@@ -5,6 +5,11 @@ options:
    
 logsBucket: gs://caranthir-archive
 
+substitutions:
+  _SONAR_PROJECT_KEY: "pipeline-test-2"
+  _SONAR_ORGANIZATION: "Beron%Banton%II"
+  _SONAR_TOKEN: "3dae5149a6873b018629cfbfd8cfcda90ea3b6f1"
+
 steps:
 - name: 'gcr.io/cloud-builders/git'
   entrypoint: 'sh'
@@ -21,11 +26,11 @@ steps:
   - '-c'
   - |
     sonar-scanner \
-      -Dsonar.projectKey=$pipeline-test-2 \
-      -Dsonar.organization=$Beron%Banton%II \
+      -Dsonar.projectKey=${_SONAR_PROJECT_KEY} \
+      -Dsonar.organization=${_SONAR_ORGANIZATION} \
       -Dsonar.sources=. \
       -Dsonar.host.url=https://sonarcloud.io \
-      -Dsonar.login=$3dae5149a6873b018629cfbfd8cfcda90ea3b6f1
+      -Dsonar.login=${_SONAR_TOKEN}
 
 #Docker build and push to GCR
 - name: 'gcr.io/cloud-builders/docker'
