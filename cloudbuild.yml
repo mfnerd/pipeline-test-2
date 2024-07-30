@@ -31,7 +31,7 @@ steps:
       -Dsonar.organization=${_SONAR_ORGANIZATION} \
       -Dsonar.sources=. \
       -Dsonar.host.url=https://sonarcloud.io \
-      -Dsonar.login=${SONAR_TOKEN} \
+      -Dsonar.login=$SONAR_TOKEN \
       -Dsonar.working.directory=/tmp/.scannerwork
 
 #Docker build and push to GCR
@@ -62,7 +62,7 @@ images:
 
 availableSecrets:
   secretManager:
-  - versionName: projects/PROJECT_ID/secrets/SONAR_TOKEN/versions/latest
+  - versionName: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
     env: 'SONAR_TOKEN'
 
 #- name: 'gcr.io/cloud-builders/kubectl'
