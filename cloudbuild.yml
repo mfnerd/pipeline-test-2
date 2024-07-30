@@ -31,7 +31,7 @@ steps:
       -Dsonar.organization=${_SONAR_ORGANIZATION} \
       -Dsonar.sources=. \
       -Dsonar.host.url=https://sonarcloud.io \
-      -Dsonar.login=$SONAR_TOKEN \
+      -Dsonar.login=$$SONAR_TOKEN \
       -Dsonar.working.directory=/tmp/.scannerwork
 
 #Docker build and push to GCR
