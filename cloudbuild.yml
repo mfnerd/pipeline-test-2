@@ -9,7 +9,7 @@ substitutions:
   _SONAR_PROJECT_KEY: "pipeline-test-2"
   _SONAR_ORGANIZATION: "gwenbleidd32"
   _SONAR_TOKEN: "3dae5149a6873b018629cfbfd8cfcda90ea3b6f1"
-
+#Clones content from repo that the trigger is aimed at
 steps:
 - name: 'gcr.io/cloud-builders/git'
   entrypoint: 'sh'
@@ -19,9 +19,10 @@ steps:
     git clone https://github.com/Gwenbleidd32/pipeline-test-2
     cd pipeline-test-2
 
-#SonarCloud analysis step
+#SonarCloud analysis step - Notice how the security scan is the first step :)
 - name: 'sonarsource/sonar-scanner-cli'
   entrypoint: 'sh'
+  secretEnv: ['SONAR_TOKEN']
   args:
   - '-c'
   - |
@@ -30,7 +31,7 @@ steps:
       -Dsonar.organization=${_SONAR_ORGANIZATION} \
       -Dsonar.sources=. \
       -Dsonar.host.url=https://sonarcloud.io \
-      -Dsonar.login=${_SONAR_TOKEN} \
+      -Dsonar.login=${SONAR_TOKEN} \
       -Dsonar.working.directory=/tmp/.scannerwork
 
 #Docker build and push to GCR
