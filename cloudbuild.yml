@@ -61,8 +61,9 @@ images:
 - 'gcr.io/pooper-scooper/cahir:v1.0.0'
 
 secrets:
-- secretEnv: 
-    SONAR_TOKEN: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
+- secret: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
+  secretEnv:
+    SONAR_TOKEN: SONAR_TOKEN
 
 #- name: 'gcr.io/cloud-builders/kubectl'
 #  args: ['apply', '-f', 'k8s/deployment.yaml'] #apply the deployment
