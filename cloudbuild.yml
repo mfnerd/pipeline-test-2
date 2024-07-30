@@ -8,7 +8,7 @@ logsBucket: gs://caranthir-archive
 substitutions:
   _SONAR_PROJECT_KEY: "pipeline-test-2"
   _SONAR_ORGANIZATION: "gwenbleidd32"
-  _SONAR_TOKEN: "3dae5149a6873b018629cfbfd8cfcda90ea3b6f1"
+
 #Clones content from repo that the trigger is aimed at
 steps:
 - name: 'gcr.io/cloud-builders/git'
@@ -59,6 +59,10 @@ steps:
 
 images:
 - 'gcr.io/pooper-scooper/cahir:v1.0.0'
+
+secrets:
+- secretManagerSecrets:
+    SONAR_TOKEN: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
 
 
 #- name: 'gcr.io/cloud-builders/kubectl'
