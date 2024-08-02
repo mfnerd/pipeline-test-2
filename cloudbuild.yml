@@ -42,6 +42,8 @@ steps:
     echo "Directory contents:"
     ls -la
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
+    mkdir -p /tmp/.scannerwork
+    mv coverage.xml /tmp/.scannerwork/
 
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
@@ -51,7 +53,6 @@ steps:
   args:
   - '-c'
   - |
-    mkdir -p /tmp/.scannerwork
     sonar-scanner -X \
       -Dsonar.projectKey=${_SONAR_PROJECT_KEY} \
       -Dsonar.organization=${_SONAR_ORGANIZATION} \
