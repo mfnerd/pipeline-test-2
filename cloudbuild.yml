@@ -38,7 +38,7 @@ steps:
     which pytest || { echo "pytest not found in PATH"; exit 1; }
     pytest --version || { echo "Unable to get pytest version"; exit 1; }
     echo "Running tests with pytest"
-    pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
+    PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
 
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
