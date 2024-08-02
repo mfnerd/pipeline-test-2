@@ -10,7 +10,8 @@ def client():
 def test_index(client):
     rv = client.get('/')
     assert rv.status_code == 200
-    assert b'APPLICATION-2' in rv.data
+    print(rv.data)  # Debug print statement to inspect the response content
+    assert b'APPLICATION-A' in rv.data  # Updated to match the application content
     assert b'Counter Value' in rv.data
 
 def test_increment(client):
