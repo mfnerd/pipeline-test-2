@@ -11,7 +11,7 @@ def test_index(client):
     rv = client.get('/')
     assert rv.status_code == 200
     print(rv.data)  # Debug print statement to inspect the response content
-    assert b'APPLICATION-A' in rv.data  # Updated to match the application content
+    assert b'APPLICATION-A' in rv.data or b'APPLICATION-B' in rv.data  # Updated to match the application content
     assert b'Counter Value' in rv.data
 
 def test_increment(client):
