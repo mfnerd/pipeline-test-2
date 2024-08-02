@@ -64,7 +64,7 @@ availableSecrets:
   secretManager:
   - versionName: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
     env: 'SONAR_TOKEN'
-
+#Secrets are Painful
 #- name: 'gcr.io/cloud-builders/kubectl'
 #  args: ['apply', '-f', 'k8s/deployment.yaml'] #apply the deployment
 
