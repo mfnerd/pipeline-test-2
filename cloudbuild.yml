@@ -59,7 +59,7 @@ steps:
       -Dsonar.login=$$SONAR_TOKEN \
       -Dsonar.python.coverage.reportPaths=coverage.xml \
       -Dsonar.python.xunit.reportPath=xunit-reports/xunit-result-*.xml \ 
-      -Dsonar.working.directory=/tmp/.scannerwork
+      -Dsonar.working.directory=/tmp/.scannerwork || { echo "Sonar scanner failed"; exit 1; }
 
 #Docker build and push to GCR
 - name: 'gcr.io/cloud-builders/docker'
