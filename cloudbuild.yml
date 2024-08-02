@@ -25,12 +25,14 @@ steps:
     args:
     - '-c'
     - |
-      cd pipeline-test-2
-      pip install --upgrade pip
-      pip install -r requirements.txt
-      pip install pytest pytest-cov
-      pip list
-      which pytest
+    cd pipeline-test-2
+    pip install --upgrade pip
+    pip install -r requirements.txt
+    pip install pytest pytest-cov
+    echo "Installed packages:"
+    pip list
+    echo "Checking pytest path:"
+    which pytest
 
 # Code to run tests and export results through XML to Sonar cloud. for DAST Testing. If requirments arn't met, the build will fail.
 - name: 'python:3.8-slim'
