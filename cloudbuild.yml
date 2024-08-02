@@ -19,6 +19,25 @@ steps:
     git clone https://github.com/Gwenbleidd32/pipeline-test-2
     cd pipeline-test-2
 
+#Install python and dependancies to conduct my very first DAST Test:
+- name: 'python:3.8-slim'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+    cd pipeline-test-2
+    pip install -r requirements.txt
+    pip install pytest pytest-cov
+
+# Code to run tests and export results through XML to Sonar cloud. for DAST Testing. If requirments arn't met, the build will fail.
+- name: 'python:3.8-slim'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+    cd pipeline-test-2
+    pytest --cov=app --cov-report=xml    
+
 #SonarCloud analysis step - Notice how the security scan is the first step :)
 - name: 'sonarsource/sonar-scanner-cli'
   entrypoint: 'sh'
@@ -32,6 +51,7 @@ steps:
       -Dsonar.sources=. \
       -Dsonar.host.url=https://sonarcloud.io \
       -Dsonar.login=$$SONAR_TOKEN \
+      -Dsonar.python.coverage.reportPaths=coverage.xml \
       -Dsonar.working.directory=/tmp/.scannerwork
 
 #Docker build and push to GCR
