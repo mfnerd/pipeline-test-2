@@ -41,7 +41,7 @@ steps:
     echo "Current directory: $(pwd)"
     echo "Directory contents:"
     ls -la
-    PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml --cov-report=html || { echo "pytest failed"; exit 1; }
+    PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
 
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
@@ -58,8 +58,7 @@ steps:
       -Dsonar.host.url=https://sonarcloud.io \
       -Dsonar.login=$$SONAR_TOKEN \
       -Dsonar.python.coverage.reportPaths=coverage.xml \
-      -Dsonar.python.xunit.reportPath=xunit-reports/xunit-result-*.xml \ 
-      -Dsonar.working.directory=/tmp/.scannerwork || { echo "Sonar scanner failed"; exit 1; }
+      -Dsonar.working.directory=/tmp/.scannerwork
 
 #Docker build and push to GCR
 - name: 'gcr.io/cloud-builders/docker'
