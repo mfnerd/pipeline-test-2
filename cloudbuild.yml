@@ -20,14 +20,17 @@ steps:
     cd pipeline-test-2
 
 #Install python and dependancies to conduct my very first DAST Test:
-- name: 'python:3.8-slim'
-  entrypoint: 'sh'
-  args:
-  - '-c'
-  - |
-    cd pipeline-test-2
-    pip install -r requirements.txt
-    pip install pytest pytest-cov
+  - name: 'python:3.8-slim'
+    entrypoint: 'sh'
+    args:
+    - '-c'
+    - |
+      cd pipeline-test-2
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      pip install pytest pytest-cov
+      pip list
+      which pytest
 
 # Code to run tests and export results through XML to Sonar cloud. for DAST Testing. If requirments arn't met, the build will fail.
 - name: 'python:3.8-slim'
