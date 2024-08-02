@@ -20,25 +20,25 @@ steps:
     cd pipeline-test-2
 
   # Step 2: Install dependencies and run tests
-  - name: 'python:3.8-slim'
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - |
-        cd pipeline-test-2
-        echo "Upgrading pip..."
-        pip install --upgrade pip
-        echo "Installing requirements..."
-        pip install -r requirements.txt
-        echo "Installing pytest and pytest-cov..."
-        pip install pytest pytest-cov
-        echo "Installed packages:"
-        pip list
-        echo "Checking pytest path:"
-        which pytest || { echo "pytest not found in PATH"; exit 1; }
-        pytest --version || { echo "Unable to get pytest version"; exit 1; }
-        echo "Running tests with pytest"
-        pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
+- name: 'python:3.8-slim'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+    cd pipeline-test-2
+    echo "Upgrading pip..."
+    pip install --upgrade pip
+    echo "Installing requirements..."
+    pip install -r requirements.txt
+    echo "Installing pytest and pytest-cov..."
+    pip install pytest pytest-cov
+    echo "Installed packages:"
+    pip list
+    echo "Checking pytest path:"
+    which pytest || { echo "pytest not found in PATH"; exit 1; }
+    pytest --version || { echo "Unable to get pytest version"; exit 1; }
+    echo "Running tests with pytest"
+    pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
 
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
