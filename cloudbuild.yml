@@ -38,6 +38,9 @@ steps:
     which pytest || { echo "pytest not found in PATH"; exit 1; }
     pytest --version || { echo "Unable to get pytest version"; exit 1; }
     echo "Running tests with pytest"
+    echo "Current directory: $(pwd)"
+    echo "Directory contents:"
+    ls -la
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
 
 
