@@ -44,15 +44,15 @@ steps:
   args:
   - '-c'
   - |
-    cd /mnt/shared-data/pipeline-test-2
+    cd /mnt/shared-data
     pip install --upgrade pip
     pip install -r requirements.txt
     pip install pytest pytest-cov
     pip list
     which pytest || { echo "pytest not found in PATH"; exit 1; }
     pytest --version || { echo "Unable to get pytest version"; exit 1; }
-    find . -type d -name "__pycache__" -exec rm -r {} +  # Remove __pycache__ directories
-    find /mnt/shared-data/pipeline-test-2 -type f -name "*.pyc" -exec rm -f {} +
+    find . -type d -name "__pycache__" -exec rm -r {} +
+    find . -type f -name "*.pyc" -exec rm -f {} +
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
     gsutil cp coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
 
