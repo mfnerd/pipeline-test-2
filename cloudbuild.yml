@@ -48,11 +48,11 @@ steps:
   #Snyk security scan
 - name: 'snyk/snyk-cli:docker'
   entrypoint: 'sh'
-  secretEnv: ['snyk-token']
+  secretEnv: ['SNYK_TOKEN']
   args:
   - '-c'
   - |
-    snyk auth $$snyk-token
+    snyk auth $$SNYK_TOKEN
     snyk test --all-projects    
 
 
@@ -105,7 +105,7 @@ availableSecrets:
   - versionName: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
     env: 'SONAR_TOKEN'
   - versionName: projects/pooper-scooper/secrets/snyk-token/versions/latest
-    env: 'snyk-token'
+    env: 'SNYK_TOKEN'
 #Secrets are Painful
 #- name: 'gcr.io/cloud-builders/kubectl'
 #  args: ['apply', '-f', 'k8s/deployment.yaml'] #apply the deployment
