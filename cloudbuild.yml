@@ -45,6 +45,16 @@ steps:
     mkdir -p /tmp/.scannerwork
     mv coverage.xml /tmp/.scannerwork/
 
+  #Snyk security scan
+- name: 'snyk/snyk-cli'
+  entrypoint: 'sh'
+  secretEnv: ['snyk-token']
+  args:
+  - '-c'
+  - |
+    snyk auth $$snyk-token
+    snyk test --all-projects    
+
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
 - name: 'sonarsource/sonar-scanner-cli'
@@ -94,6 +104,8 @@ availableSecrets:
   secretManager:
   - versionName: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
     env: 'SONAR_TOKEN'
+  - versionName: projects/pooper-scooper/secrets/snyk-token/versions/latest
+    env: 'snyk-token'
 #Secrets are Painful
 #- name: 'gcr.io/cloud-builders/kubectl'
 #  args: ['apply', '-f', 'k8s/deployment.yaml'] #apply the deployment
