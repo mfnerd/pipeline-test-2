@@ -26,21 +26,12 @@ steps:
   - '-c'
   - |
     cd pipeline-test-2
-    echo "Upgrading pip..."
     pip install --upgrade pip
-    echo "Installing requirements..."
     pip install -r requirements.txt
-    echo "Installing pytest and pytest-cov..."
     pip install pytest pytest-cov
-    echo "Installed packages:"
     pip list
-    echo "Checking pytest path:"
     which pytest || { echo "pytest not found in PATH"; exit 1; }
     pytest --version || { echo "Unable to get pytest version"; exit 1; }
-    echo "Running tests with pytest"
-    echo "Current directory: $(pwd)"
-    echo "Directory contents:"
-    ls -la
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
     mkdir -p /tmp/.scannerwork
     mv coverage.xml /tmp/.scannerwork/
