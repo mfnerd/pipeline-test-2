@@ -3,7 +3,7 @@
 #             You can also use python:3.7.5-slim-buster for a Debian image
 
 # Use a more recent version of the Python Alpine image
-FROM python:3.7.5-alpine3.10
+FROM python:3.13.0b4-slim-bullseye
 
 # Update apk-tools to a secure version and install other dependencies
 RUN apk update && apk upgrade --no-cache
