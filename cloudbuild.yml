@@ -67,7 +67,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/cahir:v1.0.0', '.'] #builds the image
 
-# Step to run Snyk security scan on the built Docker image
+# Step to run Snyk security scan on the built Docker image - Software composition analysis
 - name: 'snyk/snyk-cli:docker'
   entrypoint: 'sh'
   secretEnv: ['SNYK_TOKEN']
@@ -77,6 +77,24 @@ steps:
     snyk auth $$SNYK_TOKEN
     snyk test --docker gcr.io/$PROJECT_ID/cahir:v1.0.0 --file=Dockerfile || true
 
+# Step to run ZAP security scan on the Docker container
+- name: 'ubuntu'
+  entrypoint: bash
+  args:
+  - '-c'
+  - |-
+    apt-get update
+    apt-get -y install wget default-jdk docker.io
+    wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
+    tar -xvf ZAP_2.14.0_Linux.tar.gz
+    cd ZAP_2.14.0
+    # Start the Docker container
+    docker run -d --name cahir-app -p 5000:5000 gcr.io/$PROJECT_ID/cahir:v1.0.0
+    # Run ZAP scan against the running container
+    ./zap.sh -cmd -quickurl http://localhost:5000 -quickprogress -quickout /workspace/zap_report.html
+    # Copy the report to the cloud bucket
+    gsutil cp /workspace/zap_report.html gs://kaer-seren-archive/zap/zap_report.html
+  id: DAST Scan using OWASP ZAP
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/cahir:v1.0.0'] # pushes the image to Google Container Registry
@@ -106,14 +124,7 @@ availableSecrets:
     env: 'SONAR_TOKEN'
   - versionName: projects/pooper-scooper/secrets/snyk-token/versions/latest
     env: 'SNYK_TOKEN'
-#Secrets are Painful
-#- name: 'gcr.io/cloud-builders/kubectl'
-#  args: ['apply', '-f', 'k8s/deployment.yaml'] #apply the deployment
 
-#- name: 'gcr.io/cloud-builders/kubectl'
-#  args: ['apply', '-f', 'k8s/service.yaml'] #apply the service
-
-#  _COMMIT_SHA: 'latest'
 #Take notice how this file is ordered. first step to last step. The image is pulled, caontainerized, and pushed to GCR.
 #Then the login of kubernetes is automated, and then a deployment and service is applied.
 #Match you Service account with the right permissions for kubectl to make this work.
