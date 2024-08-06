@@ -6,7 +6,7 @@
 FROM python:3.7.5-alpine3.10
 
 # Update apk-tools to a secure version and install other dependencies
-RUN apk update && apk upgrade && apk add --no-cache apk-tools=2.10.6-r0
+RUN apk update && apk upgrade --no-cache
 
 # Create a directory for the app and set it as the working directory
 RUN mkdir /dockerapp1
