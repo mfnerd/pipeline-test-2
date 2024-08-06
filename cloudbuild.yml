@@ -56,7 +56,7 @@ steps:
     ls -R
     find . -type d -name "__pycache__" -exec rm -r {} +
     find . -type f -name "*.pyc" -exec rm -f {} +
-    PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
+    PYTHONPATH=$(pwd) pytest /mnt/shared-data --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
     gsutil cp coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
