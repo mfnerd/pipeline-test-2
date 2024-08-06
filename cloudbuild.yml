@@ -79,14 +79,14 @@ steps:
 
 
   # Run ZAP security scan on the Docker container
-- name: 'owasp/zap2docker-stable'
+- name: 'owasp/zap2docker-weekly'
   entrypoint: 'sh'
   args:
   - '-c'
   - |
     docker run -d --name cahir-app -p 5000:5000 gcr.io/$PROJECT_ID/cahir:v1.0.0
     sleep 30 # Ensure the app is fully started
-    docker run --rm -v $(pwd):/zap/wrk:rw --network="host" owasp/zap2docker-stable zap-baseline.py -t http://localhost:5000 -r testreport.html
+    zap-baseline.py -t http://localhost:5000 -r testreport.html
     gsutil cp testreport.html gs://kaer-seren-archive/zap/zap_report.html
 
 
