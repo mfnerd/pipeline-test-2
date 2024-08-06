@@ -51,6 +51,7 @@ steps:
     pip list
     which pytest || { echo "pytest not found in PATH"; exit 1; }
     pytest --version || { echo "Unable to get pytest version"; exit 1; }
+    find . -type d -name "__pycache__" -exec rm -r {} +  # Remove __pycache__ directories
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
     gsutil cp coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
 
