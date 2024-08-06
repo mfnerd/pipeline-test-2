@@ -45,6 +45,8 @@ steps:
   - '-c'
   - |
     cd /mnt/shared-data
+    git clone https://github.com/Gwenbleidd32/pipeline-test-2 /mnt/shared-data/pipeline-test-2
+    cd /mnt/shared-data/pipeline-test-2
     pip install --upgrade pip
     pip install -r requirements.txt
     pip install pytest pytest-cov
@@ -54,9 +56,7 @@ steps:
     # Debugging: List files to check structure
     echo "Directory structure:"
     ls -R
-    find . -type d -name "__pycache__" -exec rm -r {} +
-    find . -type f -name "*.pyc" -exec rm -f {} +
-    PYTHONPATH=$(pwd) pytest /mnt/shared-data --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
+    PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
     gsutil cp coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
