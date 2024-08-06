@@ -67,6 +67,9 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/cahir:v1.0.0', '.'] #builds the image
 
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/cahir:v1.0.0'] # pushes the image to Google Container Registry
+
 # Step to run Snyk security scan on the built Docker image - Software composition analysis
 - name: 'snyk/snyk-cli:docker'
   entrypoint: 'sh'
@@ -78,20 +81,28 @@ steps:
     snyk test --docker gcr.io/$PROJECT_ID/cahir:v1.0.0 --file=Dockerfile || true
 
 
-  # Run ZAP security scan on the Docker container
-- name: 'owasp/zap2docker-weekly'
-  entrypoint: 'sh'
+  # Run ZAP security scan on the Docker container Downloads Zpa and it's Dependancies nad installs SDK Shell to preform operations
+- name: 'ubuntu'
+  entrypoint: 'bash'
   args:
   - '-c'
-  - |
+  - |-
+    apt-get update
+    apt-get -y install wget default-jdk docker.io gnupg curl
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    apt-get install -y apt-transport-https ca-certificates
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+    apt-get update && apt-get -y install google-cloud-sdk
+    wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
+    tar -xvf ZAP_2.14.0_Linux.tar.gz
+    cd ZAP_2.14.0
+    # Start the Docker container
     docker run -d --name cahir-app -p 5000:5000 gcr.io/$PROJECT_ID/cahir:v1.0.0
     sleep 30 # Ensure the app is fully started
-    zap-baseline.py -t http://localhost:5000 -r testreport.html
-    gsutil cp testreport.html gs://kaer-seren-archive/zap/zap_report.html
-
-
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/cahir:v1.0.0'] # pushes the image to Google Container Registry
+    # Run ZAP scan against the running container
+    ./zap.sh -cmd -quickurl http://localhost:5000 -quickprogress -quickout /workspace/zap_report.html
+    # Copy the report to the cloud bucket
+    /usr/bin/gsutil cp /workspace/zap_report.html gs://kaer-seren-archive/zap/zap_report.html
 
 #Kubernetes login information
 - name: 'gcr.io/cloud-builders/gcloud'
