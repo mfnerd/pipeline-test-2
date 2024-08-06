@@ -97,6 +97,8 @@ steps:
   args:
   - '-c'
   - |-
+    apt-get update
+    apt-get -y install wget docker.io gsutil
     cd /mnt/shared-data
     wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
     tar -xvf ZAP_2.14.0_Linux.tar.gz
