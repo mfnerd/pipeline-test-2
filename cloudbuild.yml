@@ -38,10 +38,13 @@ steps:
   # Step 3: Install dependencies and run tests
 - name: 'python:3.8-slim'
   entrypoint: 'sh'
+  volumes:
+  - name: 'shared-data'
+    path: /mnt/shared-data
   args:
   - '-c'
   - |
-    cd pipeline-test-2
+    cd /mnt/shared-data/pipeline-test-2
     pip install --upgrade pip
     pip install -r requirements.txt
     pip install pytest pytest-cov
