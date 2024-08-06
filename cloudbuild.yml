@@ -46,7 +46,7 @@ steps:
     mv coverage.xml /tmp/.scannerwork/
 
   #Snyk security scan
-- name: 'snyk/snyk-cli'
+- name: 'snyk/snyk'
   entrypoint: 'sh'
   secretEnv: ['snyk-token']
   args:
