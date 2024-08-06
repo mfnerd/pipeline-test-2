@@ -51,6 +51,9 @@ steps:
     pip list
     which pytest || { echo "pytest not found in PATH"; exit 1; }
     pytest --version || { echo "Unable to get pytest version"; exit 1; }
+    # Debugging: List files to check structure
+    echo "Directory structure:"
+    ls -R
     find . -type d -name "__pycache__" -exec rm -r {} +
     find . -type f -name "*.pyc" -exec rm -f {} +
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
