@@ -2,27 +2,32 @@
 #   Nov 2019: Update base Docker image to use a more recent version of Python
 #             You can also use python:3.7.5-slim-buster for a Debian image
 
-#here, we want to specify the programming language and OS. Go look at Dockerhubfor most current version
-FROM python:3.7.5-alpine
+# Use a more recent version of the Python Alpine image
+FROM python:3.7.5-alpine3.10
 
-#we need a folder for the app
+# Update apk-tools to a secure version and install other dependencies
+RUN apk update && apk upgrade && apk add --no-cache apk-tools=2.10.6-r0
+
+# Create a directory for the app and set it as the working directory
 RUN mkdir /dockerapp1
 WORKDIR /dockerapp1
 
-#You need this for instructions
+# Copy the requirements file and install the Python dependencies
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+# Copy the rest of the application code
 COPY . .
 
-#Use your info here
-LABEL maintainer="Dhubleidd <premiumforges32@gmail.com@gmail.com>" \
+# Add metadata to the image
+LABEL maintainer="Dhubleidd <premiumforges32@gmail.com>" \
       version="1.0"
 
 # Expose port 5000
 EXPOSE 5000
-      
-#default command when executed 
+
+# Set the default command to run the application
 CMD ["python", "app.py"]
+
 
 
