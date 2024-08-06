@@ -53,7 +53,7 @@ steps:
   - '-c'
   - |
     snyk auth $$SNYK_TOKEN
-    DEBUG=*snyk* snyk test --all-projects || { echo "Snyk test failed"; exit 1; }    
+    snyk test --file=requirements.txt --all-projects || { echo "Snyk test failed"; exit 1; }    
 
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
