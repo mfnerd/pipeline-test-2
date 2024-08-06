@@ -85,7 +85,7 @@ steps:
   - '-c'
   - |-
     apt-get update
-    apt-get -y install wget default-jdk docker.io gnupg
+    apt-get -y install wget default-jdk docker.io gnupg curl
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
     apt-get install -y apt-transport-https ca-certificates
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
@@ -99,8 +99,7 @@ steps:
     # Run ZAP scan against the running container
     ./zap.sh -cmd -quickurl http://localhost:5000 -quickprogress -quickout /workspace/zap_report.html
     # Copy the report to the cloud bucket
-    gsutil cp /workspace/zap_report.html gs://kaer-seren-archive/zap/zap_report.html
-
+    /usr/bin/gsutil cp /workspace/zap_report.html gs://kaer-seren-archive/zap/zap_report.html
 
 
 - name: 'gcr.io/cloud-builders/docker'
