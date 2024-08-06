@@ -64,7 +64,7 @@ steps:
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
     cat /mnt/shared-data/pipeline-test-2/coverage.xml
 
-    /mnt/shared-data/google-cloud-sdk/bin/gsutil cp /mnt/shared-data/pipeline-test-2/coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
+    /usr/bin/gsutil cp /mnt/shared-data/pipeline-test-2/coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
 - name: 'sonarsource/sonar-scanner-cli'
