@@ -96,7 +96,7 @@ steps:
     snyk test --docker gcr.io/$PROJECT_ID/cahir:v1.0.0 --file=Dockerfile || true
 
 
-  # Run ZAP security scan on the Docker container Downloads Zap and it's Dependancies and installs SDK Shell to preform operations
+  # Run ZAP security scan on the Docker container Downloads Zap and it's Dependancies and installs SDK Shell to preform operations Software Composition Analysis (SCA)
 - name: 'ubuntu'
   entrypoint: 'bash'
   volumes:
