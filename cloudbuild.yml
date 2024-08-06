@@ -1,15 +1,16 @@
-#The Options filed is neccessary when using a custom service account. It specifies the storage logging options for the build.
-
+# The Options filed is neccessary when using a custom service account. It specifies the storage logging options for the build.
+# Bucket to Store Build Logs
 options:
   logging: GCS_ONLY
    
 logsBucket: gs://caranthir-archive
 
+# Neccessary substitions for the sonarcube to work properly
 substitutions:
   _SONAR_PROJECT_KEY: "pipeline-test-2"
   _SONAR_ORGANIZATION: "gwenbleidd32"
 
-#Clones content from repo that the trigger is aimed at
+# Clones content from repo that the trigger is aimed at
 steps:
 - name: 'gcr.io/cloud-builders/git'
   entrypoint: 'sh'
@@ -19,7 +20,7 @@ steps:
     git clone https://github.com/Gwenbleidd32/pipeline-test-2
     cd pipeline-test-2
 
-# Step 2: Set up the environment and install Google SDK and dependencies
+# Step 2: Dummy Stored Volume- Attempted to pass gcloud shell enviornment to no avail
 - name: 'ubuntu'
   entrypoint: 'bash'
   args:
@@ -35,7 +36,7 @@ steps:
   - name: 'shared-data'
     path: /mnt/shared-data
 
-  # Step 3: Install dependencies and run tests
+  # Step 3: Pytest Hybrid Code Testing and Coverage Report
 - name: 'python:3.8-slim'
   entrypoint: 'sh'
   volumes:
@@ -44,29 +45,26 @@ steps:
   args:
   - '-c'
   - |
+    # Gcloud installation for bucket push:
     apt-get update && apt-get install -y git wget default-jdk docker.io gnupg curl apt-transport-https ca-certificates
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
     apt-get update && apt-get -y install google-cloud-sdk
 
+    # Preparing the environment for testing the code:
     cd /mnt/shared-data
     git clone https://github.com/Gwenbleidd32/pipeline-test-2 /mnt/shared-data/pipeline-test-2
     cd /mnt/shared-data/pipeline-test-2
     pip install --upgrade pip
     pip install -r requirements.txt
     pip install pytest pytest-cov
-    pip list
-    which pytest || { echo "pytest not found in PATH"; exit 1; }
-    pytest --version || { echo "Unable to get pytest version"; exit 1; }
-    # Debugging: List files to check structure
-    echo "Directory structure:"
-    ls -R
+
+    # Test and push
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
     cat /mnt/shared-data/pipeline-test-2/coverage.xml
-
     /usr/bin/gsutil cp /mnt/shared-data/pipeline-test-2/coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
 
-#SonarCloud analysis step - Notice how the security scan is the first step :)
+# Step 4: SonarQube Code Quality Scan SAST Testing
 - name: 'sonarsource/sonar-scanner-cli'
   entrypoint: 'sh'
   secretEnv: ['SONAR_TOKEN']
@@ -84,14 +82,14 @@ steps:
       -Dsonar.exclusions=**/__pycache__/**,**/*.pyc \
       -Dsonar.working.directory=/tmp/.scannerwork
 
-#Docker build and push to GCR
+# Step 5: Docker build and push to GCR
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/cahir:v1.0.0', '.'] #builds the image
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/cahir:v1.0.0'] # pushes the image to Google Container Registry
 
-# Step to run Snyk security scan on the built Docker image - Software composition analysis
+# Step 6: Snyk SCAs and Vulnerability Testing - Software Composition Analysis
 - name: 'snyk/snyk-cli:docker'
   entrypoint: 'sh'
   secretEnv: ['SNYK_TOKEN']
@@ -102,18 +100,21 @@ steps:
     snyk test --docker gcr.io/$PROJECT_ID/cahir:v1.0.0 --file=Dockerfile || true
 
 
-  # Run ZAP security scan on the Docker container Downloads Zap and it's Dependancies and installs SDK Shell to preform operations Software Composition Analysis (SCA)
+  # Step 7: OWASPZAP DAST Security Testing
 - name: 'ubuntu'
   entrypoint: 'bash'
   args:
   - '-c'
   - |-
+    # Dependancies
     apt-get update
     apt-get -y install wget default-jdk docker.io gnupg curl
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
     apt-get install -y apt-transport-https ca-certificates
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
     apt-get update && apt-get -y install google-cloud-sdk
+
+    # Zap configuration
     wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
     tar -xvf ZAP_2.14.0_Linux.tar.gz
     cd ZAP_2.14.0
@@ -125,11 +126,11 @@ steps:
     # Copy the report to the cloud bucket
     /usr/bin/gsutil cp /workspace/zap_report.html gs://kaer-seren-archive/zap/zap_report.html
 
-#Kubernetes login information
+# Step 8: Kubernetes login
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['container', 'clusters', 'get-credentials', 'atreides-war-fleet', '--zone', 'europe-west10', '--project', '$PROJECT_ID'] # Kubernetes login information
 
-#Kubernetes deployment and service - With rollout restart to update a live deployment
+# Step 9: Kubernetes deployment and service - With rollout restart to update a live deployment
 - name: 'gcr.io/cloud-builders/kubectl'
   entrypoint: 'sh'
   args:
@@ -144,14 +145,10 @@ steps:
 images:
 - 'gcr.io/pooper-scooper/cahir:v1.0.0'
 
+#Secrets
 availableSecrets:
   secretManager:
   - versionName: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
     env: 'SONAR_TOKEN'
   - versionName: projects/pooper-scooper/secrets/snyk-token/versions/latest
     env: 'SNYK_TOKEN'
-
-#Take notice how this file is ordered. first step to last step. The image is pulled, caontainerized, and pushed to GCR.
-#Then the login of kubernetes is automated, and then a deployment and service is applied.
-#Match you Service account with the right permissions for kubectl to make this work.
-#Note, When using a Custom Service account you need specify a bucket to store your generated build logs Or else the build will fail.
