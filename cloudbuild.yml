@@ -58,8 +58,7 @@ steps:
     echo "Directory structure:"
     ls -R
     PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
-    mv coverage.xml /mnt/shared-data/coverage.xml
-    /mnt/shared-data/google-cloud-sdk/bin/gsutil cp /mnt/shared-data/coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
+    cat /mnt/shared-data/pipeline-test-2/coverage.xml
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
 - name: 'sonarsource/sonar-scanner-cli'
