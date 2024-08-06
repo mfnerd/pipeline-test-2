@@ -19,7 +19,23 @@ steps:
     git clone https://github.com/Gwenbleidd32/pipeline-test-2
     cd pipeline-test-2
 
-  # Step 2: Install dependencies and run tests
+# Step 2: Set up the environment and install Google SDK and dependencies
+- name: 'ubuntu'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |-
+    apt-get update
+    apt-get -y install wget default-jdk docker.io gnupg curl
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    apt-get install -y apt-transport-https ca-certificates
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+    apt-get update && apt-get -y install google-cloud-sdk
+  volumes:
+  - name: 'shared-data'
+    path: /mnt/shared-data
+
+  # Step 3: Install dependencies and run tests
 - name: 'python:3.8-slim'
   entrypoint: 'sh'
   volumes:
