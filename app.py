@@ -26,7 +26,7 @@ def index():
                 }
 
                 .w3-display-middle {
-                  background-image: url('https://storage.googleapis.com/a-dream/1hot.png');
+                  background-image: url('https://storage.googleapis.com/a-dream/2hot.png');
                   background-size: cover;
                   padding: 200px; /* Add padding to make it look better */
                   border-radius: 25px; /* Optional: adds rounded corners */
