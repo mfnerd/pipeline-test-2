@@ -45,17 +45,6 @@ steps:
     mkdir -p /tmp/.scannerwork
     mv coverage.xml /tmp/.scannerwork/
 
-  #Snyk security scan
-- name: 'snyk/snyk-cli:docker'
-  entrypoint: 'sh'
-  secretEnv: ['SNYK_TOKEN']
-  args:
-  - '-c'
-  - |
-    snyk auth $$SNYK_TOKEN
-    snyk test --file=requirements.txt || { echo "Snyk test failed"; exit 1; }    
-
-
 #SonarCloud analysis step - Notice how the security scan is the first step :)
 - name: 'sonarsource/sonar-scanner-cli'
   entrypoint: 'sh'
@@ -77,6 +66,17 @@ steps:
 #Docker build and push to GCR
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/cahir:v1.0.0', '.'] #builds the image
+
+# Step to run Snyk security scan on the built Docker image
+- name: 'snyk/snyk-cli:docker'
+  entrypoint: 'sh'
+  secretEnv: ['SNYK_TOKEN']
+  args:
+  - '-c'
+  - |
+    snyk auth $$SNYK_TOKEN
+    snyk test --docker gcr.io/$PROJECT_ID/cahir:v1.0.0 --file=Dockerfile || { echo "Snyk test failed"; exit 1; }
+
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/cahir:v1.0.0'] # pushes the image to Google Container Registry
