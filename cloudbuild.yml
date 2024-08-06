@@ -48,9 +48,8 @@ steps:
     pip list
     which pytest || { echo "pytest not found in PATH"; exit 1; }
     pytest --version || { echo "Unable to get pytest version"; exit 1; }
-    PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml || { echo "pytest failed"; exit 1; }
-    mkdir -p /tmp/.scannerwork
-    mv coverage.xml /tmp/.scannerwork/
+    PYTHONPATH=$(pwd) pytest --cov=app --cov-report=xml:coverage.xml || { echo "pytest failed"; exit 1; }
+    gsutil cp coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
 
 #SonarCloud analysis step - Notice how the security scan is the first step :)
 - name: 'sonarsource/sonar-scanner-cli'
