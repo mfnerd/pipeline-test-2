@@ -1,16 +1,34 @@
 # The Options filed is neccessary when using a custom service account. It specifies the storage logging options for the build.
 # Bucket to Store Build Logs
+
+# GCP Native pipeline for CI/CD. Incorporates Sast Testing, through Sonar cube, SCAs through Snyk, DAST through OWASPZAP.
+# >
+# Throughout the pipeline, a raw uncompiled docker application is tested, built ans imaged, then sent to gcr and deployed on a kubernetes cluster.
+# >>
+# I learned alot regarding what each testing suite is checking for, and gained and awarness of the weaknesses in applications, from their arrangement of code; to their choice in images and dependancies.
+# >>>
+# The pain in this project comes from making multiple enviornments for each script to work in and making sure they are compatible with each other.
+# >>>>
+# Each script according to cloud build is in it's own independant world in which you need to mold to complete a single task.
+# >>>>>
+# In my mind simple is best when creating build scripts. Get the job done and get out.
+# >>>>>>
+
+# >>>>
+# Logging Bucket for the build logs:
 options:
   logging: GCS_ONLY
    
 logsBucket: gs://caranthir-archive
 
-# Neccessary substitions for the sonarcube to work properly
+# Neccessary substitions for the sonarcube script to work properly
+# > >>
 substitutions:
   _SONAR_PROJECT_KEY: "pipeline-test-2"
   _SONAR_ORGANIZATION: "gwenbleidd32"
 
 # Clones content from repo that the trigger is aimed at
+# > >>
 steps:
 - name: 'gcr.io/cloud-builders/git'
   entrypoint: 'sh'
@@ -20,7 +38,8 @@ steps:
     git clone https://github.com/Gwenbleidd32/pipeline-test-2
     cd pipeline-test-2
 
-# Step 2: Dummy Stored Volume- Attempted to pass gcloud shell enviornment to no avail
+# Step 2: Dummy Stored Volume- Attempted to pass gcloud shell enviornment through other scripts to no avail
+# > >>>
 - name: 'ubuntu'
   entrypoint: 'bash'
   args:
@@ -37,6 +56,7 @@ steps:
     path: /mnt/shared-data
 
   # Step 3: Pytest Hybrid Code Testing and Coverage Report
+  # > >>>
 - name: 'python:3.8-slim'
   entrypoint: 'sh'
   volumes:
@@ -65,6 +85,7 @@ steps:
     /usr/bin/gsutil cp /mnt/shared-data/pipeline-test-2/coverage.xml gs://kaer-seren-archive/pie/coverage_report.xml
 
 # Step 4: SonarQube Code Quality Scan SAST Testing
+# > >>>
 - name: 'sonarsource/sonar-scanner-cli'
   entrypoint: 'sh'
   secretEnv: ['SONAR_TOKEN']
@@ -83,13 +104,16 @@ steps:
       -Dsonar.working.directory=/tmp/.scannerwork
 
 # Step 5: Docker build and push to GCR
+# > >>>
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/cahir:v1.0.0', '.'] #builds the image
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/cahir:v1.0.0'] # pushes the image to Google Container Registry
 
+
 # Step 6: Snyk SCAs and Vulnerability Testing - Software Composition Analysis
+# > >>>
 - name: 'snyk/snyk-cli:docker'
   entrypoint: 'sh'
   secretEnv: ['SNYK_TOKEN']
@@ -101,6 +125,7 @@ steps:
 
 
   # Step 7: OWASPZAP DAST Security Testing
+  # > >>>
 - name: 'ubuntu'
   entrypoint: 'bash'
   args:
@@ -127,10 +152,12 @@ steps:
     /usr/bin/gsutil cp /workspace/zap_report.html gs://kaer-seren-archive/zap/zap_report.html
 
 # Step 8: Kubernetes login
+# > >>>
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['container', 'clusters', 'get-credentials', 'atreides-war-fleet', '--zone', 'europe-west10', '--project', '$PROJECT_ID'] # Kubernetes login information
 
 # Step 9: Kubernetes deployment and service - With rollout restart to update a live deployment
+# > >>>
 - name: 'gcr.io/cloud-builders/kubectl'
   entrypoint: 'sh'
   args:
@@ -146,6 +173,7 @@ images:
 - 'gcr.io/pooper-scooper/cahir:v1.0.0'
 
 #Secrets
+# > >>
 availableSecrets:
   secretManager:
   - versionName: projects/pooper-scooper/secrets/SONAR_TOKEN/versions/latest
