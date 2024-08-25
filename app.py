@@ -1,11 +1,19 @@
 from flask import Flask, render_template_string, request, jsonify
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+import time
 
 app = Flask(__name__)
+
+# Prometheus metrics
+REQUEST_COUNT = Counter('app_requests_total', 'Total number of requests')
+REQUEST_LATENCY = Histogram('app_request_latency_seconds', 'Request latency in seconds')
 
 counter_value = 0
 
 @app.route('/')
+@REQUEST_LATENCY.time()  # Decorator to measure request latency
 def index():
+    REQUEST_COUNT.inc()  # Increment the request count
     return render_template_string('''
         <!doctype html>
         <html lang="en">
@@ -97,10 +105,16 @@ def index():
     ''', counter=counter_value)
 
 @app.route('/increment', methods=['POST'])
+@REQUEST_LATENCY.time()  # Decorator to measure request latency
 def increment():
+    REQUEST_COUNT.inc()  # Increment the request count
     global counter_value
     counter_value += 1
     return jsonify(counter=counter_value)
 
+@app.route('/metrics')
+def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)
